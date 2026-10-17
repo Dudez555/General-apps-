@@ -1,0 +1,75 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile containing authenticated user identity, phone number, and display information.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "Display name of the user" },
+        "email": { "type": "string", "description": "User Google account email" },
+        "phoneNumber": { "type": "string", "description": "User associated phone number" },
+        "photoUrl": { "type": "string", "description": "Optional user avatar URL" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server update timestamp" }
+      },
+      "required": ["userId", "displayName", "email", "createdAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Direct SMS/Wi-Fi chat thread or group conversation.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string", "description": "Unique identifier of the conversation" },
+        "type": { "type": "string", "enum": ["direct", "group"], "description": "Type of conversation" },
+        "title": { "type": "string", "description": "Group name or recipient title" },
+        "participantUids": { "type": "array", "description": "List of participant user IDs" },
+        "participantPhones": { "type": "array", "description": "List of participant phone numbers" },
+        "adminUids": { "type": "array", "description": "List of group admin user IDs" },
+        "lastMessage": { "type": "string", "description": "Snippet of the most recent message" },
+        "lastMessageSenderId": { "type": "string", "description": "UID of user who sent last message" },
+        "lastMessageTimestamp": { "type": "string", "format": "date-time", "description": "Timestamp of last message" },
+        "isEncrypted": { "type": "boolean", "description": "Whether end-to-end encryption is enabled" },
+        "webChatSlug": { "type": "string", "description": "Public web chat link slug for recipients without app" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Update timestamp" }
+      },
+      "required": ["conversationId", "type", "title", "participantUids", "createdAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Individual message within a conversation (text, voice, system, or call invite).",
+      "type": "object",
+      "properties": {
+        "messageId": { "type": "string", "description": "Unique message ID" },
+        "conversationId": { "type": "string", "description": "Parent conversation ID" },
+        "senderId": { "type": "string", "description": "Sender user ID" },
+        "senderName": { "type": "string", "description": "Sender display name" },
+        "recipientPhone": { "type": "string", "description": "Recipient phone number" },
+        "content": { "type": "string", "description": "Message text content or voice placeholder" },
+        "encryptedPayload": { "type": "string", "description": "E2EE encrypted ciphertext payload" },
+        "messageType": { "type": "string", "enum": ["text", "voice", "system", "call_invite"], "description": "Type of message" },
+        "audioDurationSec": { "type": "integer", "description": "Duration in seconds for voice notes" },
+        "transcription": { "type": "string", "description": "AI transcription of voice note" },
+        "status": { "type": "string", "enum": ["sending", "delivered", "read"], "description": "Message status" },
+        "deliveryMode": { "type": "string", "enum": ["wifi_api", "web_link", "google_chat"], "description": "Transmission channel" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Message creation timestamp" }
+      },
+      "required": ["messageId", "conversationId", "senderId", "senderName", "content", "messageType", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profile directory"
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "Conversations and group chats"
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Messages inside a conversation"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "WiFiSMS",
+  "description": "Send SIM-less messages, voice notes & video calls over Wi-Fi with Google Sign-In and end-to-end encryption.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
